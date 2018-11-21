@@ -3,6 +3,12 @@ package data;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * The Attribute class to represent an attribute
+ * 
+ * @author Andre Godinez
+ *
+ */
 public class Attribute {
 
 	// name of attribute
@@ -14,6 +20,13 @@ public class Attribute {
 	// if it is discrete the labels are stored here otherwise "real" is stored
 	private ArrayList<String> labels;
 
+	/**
+	 * The Attribute constructor
+	 * 
+	 * @param name   - the name of the attribute
+	 * @param labels - the labels of the attribute
+	 * @throws IOException
+	 */
 	public Attribute(String name, String labels) throws IOException {
 		this.name = name;
 		this.type = labels.equals("real") ? "continuous" : "discrete";
@@ -26,6 +39,13 @@ public class Attribute {
 		}
 	}
 
+	/**
+	 * Function to map the String labels to an arraylist of labels
+	 * 
+	 * @param temp - the string of labels e.g. "[Barn_Owl,Snowy_Owl,Long-Eared_Owl]"
+	 * @return ArrayList of labels
+	 * @throws IOException
+	 */
 	private ArrayList<String> mapLabels(String temp) throws IOException {
 		if (temp == null || temp.length() < 2)
 			throw new IOException("Invalid label format");
@@ -50,6 +70,10 @@ public class Attribute {
 		return this.type;
 	}
 
+	public ArrayList<String> getLabels() {
+		return this.labels;
+	}
+	
 	public String toString() {
 		return "Attribute name: " + this.name + "; type: " + this.type + "; labels : " + this.labels;
 	}

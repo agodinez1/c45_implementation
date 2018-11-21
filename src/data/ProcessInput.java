@@ -5,6 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * ProcessInput class
+ * 
+ * 
+ * @author Andre Godinez
+ *
+ */
 public class ProcessInput {
 
 	// The list of attributes
@@ -66,7 +73,7 @@ public class ProcessInput {
 
 			// test
 			System.out.println(instance);
-			
+
 			this.instances.add(instance);
 		}
 
