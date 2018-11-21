@@ -15,18 +15,18 @@ import data.Instance;
  */
 public class Entropy {
 
-	public static double calculateDiscrete(Attribute target, ArrayList<Instance> instances) throws IOException {
-		// get target name
-		String targetName = target.getName();
-
-		// get target labels since the data is discrete
-		ArrayList<String> targetLabels = target.getLabels();
-
-		
-		HashMap<String, Integer> labelCount = calculateLabelCount(targetLabels, instances);
-
-		return null;
-	}
+//	public static double calculateDiscrete(Attribute target, ArrayList<Instance> instances) throws IOException {
+//		// get target name
+//		String targetName = target.getName();
+//
+//		// get target labels since the data is discrete
+//		ArrayList<String> targetLabels = target.getLabels();
+//
+//
+//		HashMap<String, Integer> labelCount = calculateLabelCount(targetLabels, instances);
+//
+//		return null;
+//	}
 
 	private static HashMap<String, Integer> calculateLabelCount(ArrayList<String> targetLabels,
 			ArrayList<Instance> instances) {

@@ -17,49 +17,49 @@ public class Attribute {
 	// type of attribute - if continuous or discrete
 	private String type;
 
-	// if it is discrete the labels are stored here otherwise "real" is stored
-	private ArrayList<String> labels;
+	// if it is discrete the features are stored here otherwise "real" is stored
+	private ArrayList<String> features;
 
 	/**
 	 * The Attribute constructor
 	 * 
 	 * @param name   - the name of the attribute
-	 * @param labels - the labels of the attribute
+	 * @param features - the features of the attribute
 	 * @throws IOException
 	 */
-	public Attribute(String name, String labels) throws IOException {
+	public Attribute(String name, String features) throws IOException {
 		this.name = name;
-		this.type = labels.equals("real") ? "continuous" : "discrete";
-		this.labels = new ArrayList<String>();
+		this.type = features.equals("real") ? "continuous" : "discrete";
+		this.features = new ArrayList<String>();
 
 		if (this.type.equals("discrete")) {
-			this.labels = mapLabels(labels);
+			this.features = mapFeatures(features);
 		} else {
-			this.labels.add("real");
+			this.features.add("real");
 		}
 	}
 
 	/**
-	 * Function to map the String labels to an arraylist of labels
+	 * Function to map the String features to an arraylist of features
 	 * 
-	 * @param temp - the string of labels e.g. "[Barn_Owl,Snowy_Owl,Long-Eared_Owl]"
-	 * @return ArrayList of labels
+	 * @param temp - the string of features e.g. "[Barn_Owl,Snowy_Owl,Long-Eared_Owl]"
+	 * @return ArrayList of features
 	 * @throws IOException
 	 */
-	private ArrayList<String> mapLabels(String temp) throws IOException {
+	private ArrayList<String> mapFeatures(String temp) throws IOException {
 		if (temp == null || temp.length() < 2)
 			throw new IOException("Invalid label format");
 
-		// since the labels come in [label1,label2,label3] we remove the [ ]
+		// since the features come in [label1,label2,label3] we remove the [ ]
 		temp = temp.substring(1, temp.length() - 1);
 
-		String[] labelsArray = temp.split(",");
+		String[] featuresArray = temp.split(",");
 
-		ArrayList<String> labels = new ArrayList<String>();
-		for (String label : labelsArray) {
-			labels.add(label);
+		ArrayList<String> features = new ArrayList<String>();
+		for (String label : featuresArray) {
+			features.add(label);
 		}
-		return labels;
+		return features;
 	}
 
 	public String getName() {
@@ -70,22 +70,22 @@ public class Attribute {
 		return this.type;
 	}
 
-	public ArrayList<String> getLabels() {
-		return this.labels;
+	public ArrayList<String> getFeatures() {
+		return this.features;
 	}
 	
 	public String toString() {
-		return "Attribute name: " + this.name + "; type: " + this.type + "; labels : " + this.labels;
+		return "Attribute name: " + this.name + "; type: " + this.type + "; features : " + this.features;
 	}
 
 	public static void main(String[] args) throws IOException {
 		String name = "body-length";
-		String labels = "real";
-		Attribute test = new Attribute(name, labels);
+		String features = "real";
+		Attribute test = new Attribute(name, features);
 		System.out.println(test);
 		name = "type";
-		labels = "[Barn_Owl,Snowy_Owl,Long-Eared_Owl]";
-		Attribute test2 = new Attribute(name, labels);
+		features = "[Barn_Owl,Snowy_Owl,Long-Eared_Owl]";
+		Attribute test2 = new Attribute(name, features);
 		System.out.println(test2);
 	}
 }

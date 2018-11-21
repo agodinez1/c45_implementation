@@ -1,7 +1,10 @@
 package data;
 
+import org.w3c.dom.Attr;
+
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -26,7 +29,7 @@ public class ProcessInput {
 	/**
 	 * Initialize fields by calling this constructor
 	 * 
-	 * @param          attributes[] - the array of attributes with the attributeName
+	 * @param          //attributes[] - the array of attributes with the attributeName
 	 *                 and the type of values it has
 	 * @param fileName - the name of the file
 	 * @throws IOException
@@ -56,7 +59,7 @@ public class ProcessInput {
 		}
 
 		// add all instances to arraylist of instances
-		instances = new ArrayList<Instance>();
+		instances = new ArrayList<>();
 
 		// Initialize scanner to read in file
 		Scanner scanIn = new Scanner(new File(fileName));
@@ -70,9 +73,6 @@ public class ProcessInput {
 			for (int i = 0; i < lineArray.length; i++) {
 				instance.addAttribute(this.attributes.get(i).getName(), lineArray[i]);
 			}
-
-			// test
-			System.out.println(instance);
 
 			this.instances.add(instance);
 		}
@@ -98,9 +98,16 @@ public class ProcessInput {
 		String[] attributes = { "body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
 				"type [Barn_Owl,Snowy_Owl,Long-Eared_Owl] target" };
 		ProcessInput pi = new ProcessInput(attributes, fileName);
-//		System.out.println(pi.getAttributes());
-//		System.out.println(pi.getInstances());
-//		System.out.println(pi.getTargetAttribute());
+
+		System.out.println("-------- NEW ------------");
+		for(Instance i: pi.getInstances()){
+			System.out.println(i.toString());
+		}
+
+		System.out.println("-------- NEW ------------");
+		for(Attribute i: pi.getAttributes()){
+			System.out.println(i.toString());
+		}
 	}
 
 }
