@@ -1,5 +1,7 @@
 package data;
 
+import algorithm.Entropy;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,9 +73,6 @@ public class ProcessInput {
 				instance.addAttribute(this.attributes.get(i).getName(), lineArray[i]);
 			}
 
-			// test
-			System.out.println(instance);
-
 			this.instances.add(instance);
 		}
 
@@ -96,11 +95,15 @@ public class ProcessInput {
 		// test
 		String fileName = "owls.csv";
 		String[] attributes = { "body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
-				"type [Barn_Owl,Snowy_Owl,Long-Eared_Owl] target" };
+				"type [BarnOwl,SnowyOwl,LongEaredOwl] target" };
 		ProcessInput pi = new ProcessInput(attributes, fileName);
 //		System.out.println(pi.getAttributes());
 //		System.out.println(pi.getInstances());
 //		System.out.println(pi.getTargetAttribute());
+
+		Entropy e = new Entropy();
+		double entropy = e.calculateDiscrete(pi.getTargetAttribute(), pi.getInstances());
+		System.out.println(entropy);
 	}
 
 }
