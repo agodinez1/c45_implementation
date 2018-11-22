@@ -1,10 +1,7 @@
 package data;
 
-import org.w3c.dom.Attr;
-
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -59,7 +56,7 @@ public class ProcessInput {
 		}
 
 		// add all instances to arraylist of instances
-		instances = new ArrayList<>();
+		instances = new ArrayList<Instance>();
 
 		// Initialize scanner to read in file
 		Scanner scanIn = new Scanner(new File(fileName));
