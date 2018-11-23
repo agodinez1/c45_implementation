@@ -7,29 +7,41 @@ import java.io.IOException;
 import java.util.*;
 
 public class CrossValidation {
-    ProcessInput p;
-    ArrayList<Instance> instances;
+
+    private ProcessInput p;
+    private ArrayList<Instance> instances;
 
     public CrossValidation(ProcessInput p){
         this.p = p;
         this.instances = p.getInstances();
     }
 
-    private HashMap splitList(ArrayList<Instance> instances){
-        //Collections.shuffle(instances);
+    private HashMap splitLists(int i){
+
+        //Shuffle data before splitting
+        Collections.shuffle(instances);
+
+        //Splitting instances into training and test datasets
         int trainingUpper = (int) Math.floor(instances.size() * 0.66);
         List<Instance> training = instances.subList(0, trainingUpper);
-        List<Instance> test = instances.subList(trainingUpper + 1, instances.size() - 1);
+        List<Instance> test = instances.subList(trainingUpper, instances.size() - 1);
 
-        HashMap<String, List<Instance>> map = new HashMap<String, List<Instance>>();
-        map.put("training", training);
-        map.put("test", test);
+        //Populating maps
+        HashMap<String, HashMap<Integer, List<Instance>>> parentMap = new HashMap<>();
+        HashMap<Integer, List<Instance>> trainingMap = new HashMap<>();
+        HashMap<Integer, List<Instance>> testMap = new HashMap<>();
 
-        return map;
+        trainingMap.put(i, training);
+        testMap.put(i, test);
+
+        parentMap.put("training", trainingMap);
+        parentMap.put("test", testMap);
+
+        return parentMap;
     }
 
     public ArrayList<Instance> getInstances() {
-        return this.instances;
+        return instances;
     }
 
     public static void main(String[] args) throws IOException{
@@ -39,10 +51,11 @@ public class CrossValidation {
         ProcessInput pi = new ProcessInput(attributes, fileName);
 
         CrossValidation cv = new CrossValidation(pi);
-        //System.out.println(Arrays.asList(cv.splitList(cv.getInstances())));
 
-        cv.splitList(cv.getInstances()).forEach((k, v) -> System.out.println("Key : " + k + " , Value : " + v));
-
+        //Printing HashMap
+        for(int i = 1; i <=10; i++){
+            System.out.println(Arrays.asList(cv.splitLists(i)));
+        }
     }
 
 }
