@@ -219,36 +219,36 @@ public class C45 {
     }
 
     /**
+     * @Author Andre Godinez
+     *
      * Gets the best attribute from a list of instances and attributes
      *
-     * @param instances - instance list
+     * @param instanceList - instance list
      * @param attributes - the attribute list
      * @return the attribute with the max gain
-     *
-     * Pseudocode:
-     *
-     *  set maxGain = 0.0
-     *  Attribute best = null;
-     *
-     *  for each attribute in attributes
-     *      gain = gain(instances, attribute)
-     *          if( gain > maxGain)
-     *
-     *              maxGain = gain
-     *              best = attribute
-     *
-     *              bestThreshold = threshold
-     *
-     *  if maxGain < 0
-     *      return null
-     *
-     *
-     *  return best
      */
-    private Attribute bestAttribute(List<Instance> instances, List<Attribute> attributes) {
-        //TODO
+    private Attribute bestAttribute(List<Instance> instanceList, List<Attribute> attributes) {
 
-        return null;
+        double bestGain = 0.0;
+
+        Attribute bestAttribute = null;
+
+        for (Attribute currentAttribute: attributes) {
+            double currentGain = gain(instanceList, currentAttribute);
+
+            if(currentGain > bestGain) {
+                bestGain = currentGain;
+                bestAttribute = currentAttribute;
+
+                this.bestThreshold = threshold;
+            }
+        }
+
+        if(bestGain < 0.0) {
+            return null;
+        }
+
+        return bestAttribute;
     }
 
     /**
@@ -315,42 +315,13 @@ public class C45 {
     }
 
     /**
-     * // the example only has 2 possible target values while we have 3 for the owl
-     * // need to change the pseudocode slightly
-     *
+     * @Author Andre Godinez
      *
      * Non conditional entropy
+     *
      * @param instanceList
      * @return entropy
      *
-     * Pseudocode:
-     *
-     * //basecase
-     * if instances empty
-     *  return 0
-     *
-     * // get totalsize
-     * entropy = 0.0;
-     * total = instances size
-     *
-     * int count = 0;
-     *
-     * for each possibleTargetValue in possibleTargetValues
-     *
-     *      for each instance in instances
-     *
-     *          if(instance.label equals possibleTargetValue)
-     *          count++
-     *
-     *          entropy+= (count/total) * logBase2(count/total)
-     *
-     *   //reset count to 0 for every possibleTargetValue
-     *   count = 0;
-     *
-     *
-     *  return -(entropy)
-     *
-     *  //hopefully the pseudocode works
      */
     private double entropy(List<Instance> instanceList) {
         //base case
@@ -372,7 +343,7 @@ public class C45 {
                 }
             }
             double pr = (double) count/totalSize;
-            entropy += pr*log2(pr);
+            entropy += pr * log2(pr);
             count = 0;
         }
        return -(entropy);
@@ -426,43 +397,16 @@ public class C45 {
     }
 
     /**
-     * //TODO
-     * @param instances
+     * @Author Andre Godinez
+     *
+     * Gets conditional entropy for a continuous value ie.
+     * Entropy(type|body-length) = p(type|body-length).entropy(type|body-length)
+     *
+     * @param instanceList
      * @param attribute
      * @param threshold
      * @return
      *
-     * Pseudocode:
-     *
-     * similar to what we have above
-     *
-     * //base case
-     * instance empty
-     * return 0
-     *
-     * //get all instances and partition them to lessThanEqualTo or greaterThan threshold
-     * totalsize = instances size
-     *
-     * List Instance lessThanEqualto
-     * List Instance greaterThan
-     *
-     * for each instance in instances
-     *      value is intstance.get(attribute.name)
-     *
-     *      if(value<=threshold)
-     *          add instance to lessThanEqualto
-     *
-     *      else
-     *          add instane to greaterThan
-     *
-     *  //calculate entropy
-     *  prLessthanEqualTo = lessThanEqualto.size / totalsize
-     *  prGreaterThan = greaterThan.size / totalsize
-     *
-     *  double entropy = prGreaterThanEqualTo * entropy(lessThanEqualto)
-     *      prGreaterThan * entropy(greaterThan)
-     *
-     *  return entropy
      */
     private double conditionalEntropy(List<Instance> instanceList, Attribute attribute, double threshold) {
         //base case
@@ -489,16 +433,21 @@ public class C45 {
         }
 
         //calculate entropy for each division
+        double prLessThanEqualTo = (double)lessThanEqualTo.size()/(double)totalSize;
+        double prGreaterThan = (double)greaterThan.size()/(double) totalSize;
 
+        double entropy = (prLessThanEqualTo * entropy(lessThanEqualTo)) + (prGreaterThan * entropy(greaterThan));
         
 
-        return 0;
+        return entropy;
     }
 
+    /**
+     * @Author Andre Godinez
+     */
     private double log2(double x) {
         return x == 0.0 ? 0.0 : (Math.log(x)/ Math.log(2.0));
     }
-
 
     /**
      * Returns the majority targetvalue from the instanceList
@@ -534,6 +483,9 @@ public class C45 {
         c45.train(data);
         double entropy = c45.entropy(data.getInstanceList());
         System.out.println(entropy);
+
+        double conditionalEntropyContinuousTest = c45.conditionalEntropy(data.getInstanceList(),data.getAttributes().get(2), (double) 3.0);
+        System.out.println(conditionalEntropyContinuousTest);
     }
 
 }
