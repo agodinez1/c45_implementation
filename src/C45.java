@@ -464,8 +464,33 @@ public class C45 {
      *
      *  return entropy
      */
-    private double conditionalEntropy(List<Instance> instances, Attribute attribute, double threshold) {
-        //TODO
+    private double conditionalEntropy(List<Instance> instanceList, Attribute attribute, double threshold) {
+        //base case
+        if(instanceList.isEmpty()) {
+            return 0.0;
+        }
+        
+        int totalSize = instanceList.size();
+        
+        //get all instances and divide them to lessThanEqualTo threshold or greaterThan threshold
+        
+        List<Instance> lessThanEqualTo = new ArrayList<>();
+        List<Instance> greaterThan = new ArrayList<>();
+
+        for (Instance instance: instanceList) {
+            double value = Double.parseDouble(instance.getAttributeValues().get(attribute.getName()));
+
+            if(value <= threshold) {
+                lessThanEqualTo.add(instance);
+            }
+            else {
+                greaterThan.add(instance);
+            }
+        }
+
+        //calculate entropy for each division
+
+        
 
         return 0;
     }
@@ -498,7 +523,7 @@ public class C45 {
         return false;
     }
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         String[] attributes = {"body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
                 "type [BarnOwl,SnowyOwl,LongEaredOwl] target"};
         String fileName = "owls.csv";
