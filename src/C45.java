@@ -364,6 +364,30 @@ public class C45 {
      *  return 0
      *
      * //
+     * totalSize = instances.size
+     *
+     * // initialise attribute value and the list of instances that have that value
+     * LinkedHashMap String List <Instances> subsets
+     *
+     * for each possibleValue in attribute.values
+     *      put(possibleValue , new Instance List)
+     *
+     *
+     * for each instance in instanceList
+     *      //get the subset we put in the attribute name is equal to for this instance
+     *      //then add this instance there
+     *      List<Instance> subset = subsets.get(instance.values.get(attribute.name)
+     *      subset.add(instance)
+     *
+     * //calculate entropy for this attribute
+     *
+     * double entropy = 0.0
+     * for each subset in subsets.values
+     *      double pr = subset.size/totalsize
+     *
+     *      entropy+= pr*entropy(subset)
+     *
+     *  return entropy
      *
      *
      */
@@ -379,6 +403,38 @@ public class C45 {
      * @param attribute
      * @param threshold
      * @return
+     *
+     * Pseudocode:
+     *
+     * similar to what we have above
+     *
+     * //base case
+     * instance empty
+     * return 0
+     *
+     * //get all instances and partition them to lessThanEqualTo or greaterThan threshold
+     * totalsize = instances size
+     *
+     * List Instance lessThanEqualto
+     * List Instance greaterThan
+     *
+     * for each instance in instances
+     *      value is intstance.get(attribute.name)
+     *
+     *      if(value<=threshold)
+     *          add instance to lessThanEqualto
+     *
+     *      else
+     *          add instane to greaterThan
+     *
+     *  //calculate entropy
+     *  prLessthanEqualTo = lessThanEqualto.size / totalsize
+     *  prGreaterThan = greaterThan.size / totalsize
+     *
+     *  double entropy = prGreaterThanEqualTo * entropy(lessThanEqualto)
+     *      prGreaterThan * entropy(greaterThan)
+     *
+     *  return entropy
      */
     private double conditionalEntropy(List<Instance> instances, Attribute attribute, double threshold) {
         //TODO
@@ -391,12 +447,23 @@ public class C45 {
     }
 
 
-    private String majorityTarget() {
+    /**
+     * Returns the majority targetvalue from the instanceList
+     * @param instanceList
+     * @return
+     *
+     *
+     */
+    private String majorityTarget(List<Instance> instanceList) {
         //TODO
 
         return null;
     }
 
+    /**
+     * Returns true if all isntance have the same targetValue
+     * @return
+     */
     private boolean unanimousTarget() {
         //TODO
 
