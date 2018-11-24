@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class C45 {
 
@@ -450,6 +452,8 @@ public class C45 {
     }
 
     /**
+     * @Author Andre Godinez
+     *
      * Returns the majority targetvalue from the instanceList
      * @param instanceList
      * @return
@@ -457,19 +461,50 @@ public class C45 {
      *
      */
     private String majorityTarget(List<Instance> instanceList) {
-        //TODO
+        LinkedHashMap<String, Integer> targetValueCount = new LinkedHashMap<String, Integer>();
 
-        return null;
+        for (String targetValue: possibleTargetValues) {
+            targetValueCount.put(targetValue, 0);
+        }
+
+        for (Instance instance :instanceList) {
+            String currentInstanceTargetValue = instance.getTargetValue();
+
+            targetValueCount.put(currentInstanceTargetValue, targetValueCount.get(currentInstanceTargetValue) + 1);
+        }
+
+        String majority = "";
+        int maxCount = 0;
+
+        for (Map.Entry<String, Integer> entry : targetValueCount.entrySet()) {
+            String targetValue = entry.getKey();
+            int count = entry.getValue();
+
+            if(count > maxCount) {
+                majority = targetValue;
+            }
+        }
+
+        return majority;
     }
 
     /**
-     * Returns true if all isntance have the same targetValue
-     * @return
+     * Returns true if all instances have the same targetValue
+     *
+     * @return boolean
      */
-    private boolean unanimousTarget() {
-        //TODO
+    private boolean unanimousTarget(List<Instance> instanceList) {
+        String previousTargetValue = instanceList.get(0).getTargetValue();
 
-        return false;
+        for (Instance currentInstance: instanceList) {
+            String currentTargetValue = currentInstance.getTargetValue();
+
+            if(!currentTargetValue.equals(previousTargetValue)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static void main(String[] args) throws IOException {
@@ -486,6 +521,8 @@ public class C45 {
 
         double conditionalEntropyContinuousTest = c45.conditionalEntropy(data.getInstanceList(),data.getAttributes().get(2), (double) 3.0);
         System.out.println(conditionalEntropyContinuousTest);
+
+        c45.majorityTarget(data.getInstanceList());
     }
 
 }
