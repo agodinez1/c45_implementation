@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class C45 {
 
     // global values for targetAttribute and possible values
     public Attribute targetAttribute;
-    public ArrayList<String> possibleTargetValues;
+    public List<String> possibleTargetValues;
 
     // main decisionTree parent node with child nodes
     public Node decisionTree;
@@ -49,7 +50,14 @@ public class C45 {
      *
      */
     public void train(Data data) {
-        //TODO
+        for (Attribute attribute: data.getAttributes()) {
+            if(attribute.isTarget()) {
+                targetAttribute = attribute;
+                possibleTargetValues = attribute.getPossibleValues();
+            }
+        }
+
+        //TODO: call c45Learning here
     }
 
     /**
@@ -312,7 +320,7 @@ public class C45 {
      *
      *
      * Non conditional entropy
-     * @param instances
+     * @param instanceList
      * @return entropy
      *
      * Pseudocode:
@@ -344,10 +352,30 @@ public class C45 {
      *
      *  //hopefully the pseudocode works
      */
-    private double entropy(List<Instance> instances) {
-        //TODO
+    private double entropy(List<Instance> instanceList) {
+        //base case
+        if(instanceList.isEmpty())
+            return 0.0;
 
-       return 0;
+        //get total size
+        int totalSize = instanceList.size();
+
+        //set entropy
+        double entropy = 0.0;
+
+        int count = 0;
+
+        for (String targetValue: possibleTargetValues) {
+            for (Instance currentInstance: instanceList) {
+                if(currentInstance.getTargetValue().equals(targetValue)) {
+                    count++;
+                }
+            }
+            double pr = (double) count/totalSize;
+            entropy += pr*log2(pr);
+            count = 0;
+        }
+       return -(entropy);
     }
 
     /**
@@ -468,6 +496,19 @@ public class C45 {
         //TODO
 
         return false;
+    }
+
+    public static void main(String args[]) throws IOException {
+        String[] attributes = {"body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
+                "type [BarnOwl,SnowyOwl,LongEaredOwl] target"};
+        String fileName = "owls.csv";
+
+        Data data = new Data(attributes, fileName);
+
+        C45 c45 = new C45(0);
+        c45.train(data);
+        double entropy = c45.entropy(data.getInstanceList());
+        System.out.println(entropy);
     }
 
 }

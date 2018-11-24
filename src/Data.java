@@ -14,6 +14,14 @@ public class Data {
         this.instanceList = processInstanceList(fileName);
     }
 
+    public ArrayList<Instance> getInstanceList() {
+        return instanceList;
+    }
+
+    public ArrayList<Attribute> getAttributes() {
+        return attributes;
+    }
+
     private ArrayList<Instance> processInstanceList(String fileName) throws IOException {
         Scanner scanner = new Scanner(new File(fileName));
         ArrayList<Instance> instanceList = new ArrayList<>();
