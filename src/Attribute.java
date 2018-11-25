@@ -32,7 +32,6 @@ public class Attribute {
 
     @Override
     public String toString() {
-
         return "Attribute{" +
                 "name='" + name + '\'' +
                 ", possibleValues=" + possibleValues +

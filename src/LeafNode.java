@@ -7,9 +7,7 @@ public class LeafNode extends Node {
     }
 
     @Override
-    public String toString() {
-        return "LeafNode{" +
-                "targetValue='" + targetValue + '\'' +
-                '}';
-    }
+    public void print(String prefix) {
+        System.out.println(prefix  + "└──" + targetValue);
+    };
 }

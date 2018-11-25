@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -6,6 +7,39 @@ public class C45Util {
     public static List<String> possibleTargetValues;
     public static double threshold;
     public static double bestThreshold;
+
+
+    /**
+     *
+     * @Author Andre Godinez
+     *
+     * Subset an instance list for continuous values given an attribute
+     *
+     * @param attribute
+     * @param instanceList
+     * @param threshold
+     * @return subset of instances
+     */
+    public static HashMap<String, List<Instance>> subsetInstanceListContinuous(Attribute attribute, List<Instance> instanceList, double threshold) {
+        HashMap<String, List<Instance>> subsets = new HashMap<>();
+
+        List<Instance> lessThanEqualToList = new ArrayList<>();
+        List<Instance> greaterThanList = new ArrayList<>();
+
+        for (Instance instance: instanceList) {
+            double bestAttributeValue = Double.parseDouble(instance.getAttributeValues().get(attribute.getName()));
+
+            if(bestAttributeValue <= threshold) {
+                lessThanEqualToList.add(instance);
+            } else {
+                greaterThanList.add(instance);
+            }
+        }
+        subsets.put("lessThanEqualTo", lessThanEqualToList);
+        subsets.put("greaterThan", greaterThanList);
+
+        return subsets;
+    }
 
     /**
      * @Author Andre Godinez
@@ -263,7 +297,7 @@ public class C45Util {
 
 
     /**
-     * @Author Andre Godinez
+     * @Author Cillian Fennell
      *
      * Returns the majority targetvalue from the instanceList
      * @param instanceList
@@ -302,6 +336,35 @@ public class C45Util {
         }
 
         return true;
+    }
+
+    public static void main (String[] args) throws IOException {
+        // Testing functions
+        String[] attributes = {"body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
+                "type [BarnOwl,SnowyOwl,LongEaredOwl] target"};
+        String fileName = "owls.csv";
+
+        Data data = new Data(attributes, fileName);
+
+        // Entropy test
+        double entropy = C45Util.entropy(data.getInstanceList());
+        System.out.println(entropy);
+
+
+        // Conditional Entropy with Continuous Values Test
+        double conditionalEntropyContinuousTest = C45Util.conditionalEntropy(data.getInstanceList(),data.getAttributes().get(2), (double) 3.0);
+        System.out.println(conditionalEntropyContinuousTest);
+
+        // Majority Target Test
+        System.out.println(C45Util.majorityTarget(data.getInstanceList()));
+
+        // Gain test
+        double gain = C45Util.gain(data.getInstanceList(),data.getAttributes().get(0));
+        System.out.println(gain);
+
+        // Best Attribute Test
+        Attribute attribute = C45Util.bestAttribute(data.getInstanceList(),data.getAttributes());
+        System.out.println(attribute);
     }
 
 }
