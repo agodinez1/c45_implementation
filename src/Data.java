@@ -6,20 +6,24 @@ import java.util.*;
 
 public class Data {
 
-    private ArrayList<Instance> instanceList;
-    private ArrayList<Attribute> attributes;
+    private List<Instance> instanceList;
+    private List<Attribute> attributes;
 
     public Data(String[] attributesArray, String fileName) throws IOException {
         this.attributes = processAttributes(attributesArray);
         this.instanceList = processInstanceList(fileName);
     }
 
-    public ArrayList<Instance> getInstanceList() {
+    public List<Instance> getInstanceList() {
         return instanceList;
     }
 
-    public ArrayList<Attribute> getAttributes() {
-        return attributes;
+    public List<Attribute> getAttributes() {
+        return attributes.subList(0, attributes.size() - 1);
+    }
+
+    public Attribute getTargetAttribute() {
+        return attributes.get(attributes.size() - 1);
     }
 
     private ArrayList<Instance> processInstanceList(String fileName) throws IOException {
