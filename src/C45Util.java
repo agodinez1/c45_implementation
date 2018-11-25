@@ -204,7 +204,7 @@ public class C45Util {
      *
      */
     public static double conditionalEntropy(List<Instance> instances, Attribute attribute) {
-        //TODO
+        //TODO Discrete Values
 
         return 0;
     }
@@ -272,31 +272,17 @@ public class C45Util {
      *
      */
     public static String majorityTarget(List<Instance> instanceList) {
-        LinkedHashMap<String, Integer> targetValueCount = new LinkedHashMap<String, Integer>();
+        //Map of <targetValue, count>
+        Map<String, Long> count = instanceList.stream().collect(
+                Collectors.groupingBy(Instance::getTargetValue, Collectors.counting()));
 
-        for (String targetValue: possibleTargetValues) {
-            targetValueCount.put(targetValue, 0);
-        }
+        //Finds max count in Map and returns the key
+        String majorityTarget = count.entrySet().stream()
+                                                    .max(Map.Entry.comparingByValue())
+                                                    .map(Map.Entry::getKey)
+                                                    .orElse("");
 
-        for (Instance instance :instanceList) {
-            String currentInstanceTargetValue = instance.getTargetValue();
-
-            targetValueCount.put(currentInstanceTargetValue, targetValueCount.get(currentInstanceTargetValue) + 1);
-        }
-
-        String majority = "";
-        int maxCount = 0;
-
-        for (Map.Entry<String, Integer> entry : targetValueCount.entrySet()) {
-            String targetValue = entry.getKey();
-            int count = entry.getValue();
-
-            if(count > maxCount) {
-                majority = targetValue;
-            }
-        }
-
-        return majority;
+        return majorityTarget;
     }
 
     /**
