@@ -325,15 +325,10 @@ public class C45Util {
      * @return boolean
      */
     public static boolean unanimousTarget(List<Instance> instanceList) {
-        String previousTargetValue = instanceList.get(0).getTargetValue();
+        //Counts distinct target values in instance list
+        long count = instanceList.stream().map(Instance::getTargetValue).distinct().count();
 
-        for (Instance currentInstance: instanceList) {
-            String currentTargetValue = currentInstance.getTargetValue();
-
-            if(!currentTargetValue.equals(previousTargetValue)) {
-                return false;
-            }
-        }
+        if(count != 1) return false;
 
         return true;
     }
