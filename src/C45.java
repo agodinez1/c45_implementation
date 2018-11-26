@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,10 @@ public class C45 {
 
     public void printDecisionTree() {
        this.decisionTree.print("");
+    }
+
+    public Node getDecisionTree(){
+        return decisionTree;
     }
 
     /**
@@ -60,8 +63,20 @@ public class C45 {
      * set accuracy = predicted / instanceList.size
      *
      */
-    public void test(ArrayList<Instance> instanceList) {
+    public void test(List<Instance> instanceList) {
         //TODO
+        String predicted = "";
+        int count = 0;
+        double accuracy;
+
+        for(Instance i: instanceList){
+            predicted = predict(i, decisionTree);
+            if(predicted.equals(i.getTargetValue()))
+                count++;
+        }
+
+        accuracy = count / instanceList.size();
+        System.out.println("Accuracy : " + accuracy);
     }
 
     /**
@@ -99,8 +114,25 @@ public class C45 {
      */
     public String predict(Instance instance, Node node) {
         //TODO
+        if(node instanceof LeafNode){
+            return ((LeafNode) node).targetValue;
+        }
 
-        return "";
+        if(node instanceof ContinuousNode){
+            double instanceValue = Double.parseDouble(instance.getAttributeValues()
+                                                        .get(((ContinuousNode) node).getName()));
+
+            if(instanceValue <= ((ContinuousNode) node).getThreshold()){
+                return predict(instance, node.children.get(0));
+            }else{
+                return predict(instance, node.children.get(1));
+            }
+
+        }else{
+            //TODO Discrete values
+        }
+
+        return null;
     }
 
 
@@ -176,6 +208,8 @@ public class C45 {
 
         classifier.train(data);
         classifier.printDecisionTree();
+        System.out.println("Predicted Value : " + classifier.predict(data.getInstanceList().get(100), classifier.getDecisionTree()));
+        classifier.test(data.getInstanceList());
     }
 
 }

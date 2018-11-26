@@ -12,6 +12,14 @@ public class ContinuousNode extends Node {
         this.threshold = threshold;
     }
 
+    public double getThreshold(){
+        return threshold;
+    }
+
+    public String getName(){
+        return name;
+    }
+
     @Override
     public void print(String prefix) {
         int index = 0;
