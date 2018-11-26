@@ -64,19 +64,13 @@ public class C45 {
      *
      */
     public void test(List<Instance> instanceList) {
-        //TODO
-        int count = 0;
-        double accuracy;
 
-        for(Instance i: instanceList){
-            String predicted = predict(i, decisionTree);
-            if(predicted.equals(i.getTargetValue()))
-                count++;
-        }
-        //TODO stream ^^
-
-        accuracy = count / instanceList.size();
+        long count = instanceList.stream()
+                                    .map(x -> x.getTargetValue().equals(predict(x, decisionTree)))
+                                    .count();
+        double accuracy = count / instanceList.size();
         System.out.println("Accuracy : " + accuracy);
+
     }
 
     /**

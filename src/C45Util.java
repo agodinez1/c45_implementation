@@ -1,6 +1,10 @@
+import org.w3c.dom.Attr;
+
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class C45Util {
 
@@ -23,20 +27,8 @@ public class C45Util {
     public static HashMap<String, List<Instance>> subsetInstanceListContinuous(Attribute attribute, List<Instance> instanceList, double threshold) {
         HashMap<String, List<Instance>> subsets = new HashMap<>();
 
-        List<Instance> lessThanEqualToList = new ArrayList<>();
-        List<Instance> greaterThanList = new ArrayList<>();
-
-        for (Instance instance: instanceList) {
-            double bestAttributeValue = Double.parseDouble(instance.getAttributeValues().get(attribute.getName()));
-
-            if(bestAttributeValue <= threshold) {
-                lessThanEqualToList.add(instance);
-            } else {
-                greaterThanList.add(instance);
-            }
-        }
-
-        //TODO stream supplier? ^^
+        List<Instance> lessThanEqualToList = instanceList.stream().filter(x -> getAttributeValue(x, attribute) <= threshold).collect(Collectors.toList());
+        List<Instance> greaterThanList = instanceList.stream().filter(x -> getAttributeValue(x, attribute) > threshold).collect(Collectors.toList());
 
         subsets.put("lessThanEqualTo", lessThanEqualToList);
         subsets.put("greaterThan", greaterThanList);
@@ -180,22 +172,8 @@ public class C45Util {
         int totalSize = instanceList.size();
 
         //get all instances and divide them to lessThanEqualTo threshold or greaterThan threshold
-
-        List<Instance> lessThanEqualTo = new ArrayList<>();
-        List<Instance> greaterThan = new ArrayList<>();
-
-        for (Instance instance: instanceList) {
-            double value = Double.parseDouble(instance.getAttributeValues().get(attribute.getName()));
-
-            if(value <= threshold) {
-                lessThanEqualTo.add(instance);
-            }
-            else {
-                greaterThan.add(instance);
-            }
-        }
-
-        //TODO can the above code use a Stream Supplier to reduce redundancy with subsetInstanceListContinuous()
+        List<Instance> lessThanEqualTo = instanceList.stream().filter(x -> getAttributeValue(x, attribute) <= threshold).collect(Collectors.toList());
+        List<Instance> greaterThan = instanceList.stream().filter(x -> getAttributeValue(x, attribute) > threshold).collect(Collectors.toList());
 
         //calculate entropy for each division
         double prLessThanEqualTo = (double)lessThanEqualTo.size()/(double)totalSize;
@@ -260,6 +238,13 @@ public class C45Util {
      */
     public static double log2(double x) {
         return x == 0.0 ? 0.0 : (Math.log(x)/ Math.log(2.0));
+    }
+
+    /**
+     * @Author Cillian Fennell
+     */
+    public static double getAttributeValue(Instance instance, Attribute attribute){
+        return Double.parseDouble(instance.getAttributeValues().get(attribute.getName()));
     }
 
     /**
@@ -339,6 +324,8 @@ public class C45Util {
     }
 
     /**
+     * @Author Cillian Fennell
+     *
      * Returns true if all instances have the same targetValue
      *
      * @return boolean
