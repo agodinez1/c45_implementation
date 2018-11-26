@@ -65,15 +65,15 @@ public class C45 {
      */
     public void test(List<Instance> instanceList) {
         //TODO
-        String predicted = "";
         int count = 0;
         double accuracy;
 
         for(Instance i: instanceList){
-            predicted = predict(i, decisionTree);
+            String predicted = predict(i, decisionTree);
             if(predicted.equals(i.getTargetValue()))
                 count++;
         }
+        //TODO stream ^^
 
         accuracy = count / instanceList.size();
         System.out.println("Accuracy : " + accuracy);
@@ -193,6 +193,8 @@ public class C45 {
                 //TODO : Create different node child for discrete value
             }
         }
+
+        //TODO stream ^^
 
         return root;
     }

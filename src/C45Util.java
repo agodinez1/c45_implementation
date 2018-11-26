@@ -35,6 +35,9 @@ public class C45Util {
                 greaterThanList.add(instance);
             }
         }
+
+        //TODO stream supplier? ^^
+
         subsets.put("lessThanEqualTo", lessThanEqualToList);
         subsets.put("greaterThan", greaterThanList);
 
@@ -66,6 +69,8 @@ public class C45Util {
                 bestThreshold = threshold;
             }
         }
+
+        //TODO stream ^^
 
         if(bestGain < 0.0) {
             return null;
@@ -107,6 +112,9 @@ public class C45Util {
                     threshold = currentThreshold;
                 }
             }
+
+            //TODO stream ^^
+
             return maxGain;
         }
     }
@@ -143,6 +151,8 @@ public class C45Util {
             entropy += pr * log2(pr);
             count = 0;
         }
+
+        //TODO stream ^^
 
         return -(entropy);
     }
@@ -184,6 +194,8 @@ public class C45Util {
                 greaterThan.add(instance);
             }
         }
+
+        //TODO can the above code use a Stream Supplier to reduce redundancy with subsetInstanceListContinuous()
 
         //calculate entropy for each division
         double prLessThanEqualTo = (double)lessThanEqualTo.size()/(double)totalSize;
@@ -272,8 +284,13 @@ public class C45Util {
             possibleThresholdValues.add(currentInstanceAttributeValue);
         }
 
+        //possibleThresholdValues = instanceList.stream().mapToDouble(x -> Double.parseDouble(x.getAttributeValues().get(attribute.getName())))
+        //                                                .collect(Collectors.toList());
+
         possibleThresholdValues = possibleThresholdValues.stream().distinct().collect(Collectors.toList());
         Collections.<Double>sort(possibleThresholdValues);
+
+        //TODO change above code into a stream ^^
 
         // add more thresholds by calculating the mean of 2 values beside each other
         List<Double> meanThresholdValues = new ArrayList<>();
@@ -284,6 +301,8 @@ public class C45Util {
         // skip first number for 2nd iterator
         if (num2.hasNext()) num2.next();
         while (num2.hasNext()) meanThresholdValues.add((num1.next() + num2.next()) / 2);
+
+        //TODO can this be done without an Iterator type? ^^
 
         // merge the two lists
         // remove all duplicates in both
