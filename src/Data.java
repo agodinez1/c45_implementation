@@ -1,14 +1,25 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
+
+/**
+ * @Author Andre Godinez
+ *
+ * Process data into a list of instances and attributes
+ */
 public class Data {
 
     private List<Instance> instanceList;
     private List<Attribute> attributes;
 
+    /**
+     * Constructor for Data class
+     *
+     * @param attributesArray - the attributes in string array format
+     * @param fileName - the file name containing data
+     * @throws IOException
+     */
     public Data(String[] attributesArray, String fileName) throws IOException {
         this.attributes = processAttributes(attributesArray);
         this.instanceList = processInstanceList(fileName);
@@ -26,6 +37,13 @@ public class Data {
         return attributes.get(attributes.size() - 1);
     }
 
+    /**
+     * Process instanceList from a file, attributes should be populated before running this.
+     *
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
     private ArrayList<Instance> processInstanceList(String fileName) throws IOException {
         Scanner scanner = new Scanner(new File(fileName));
         ArrayList<Instance> instanceList = new ArrayList<>();
@@ -34,6 +52,8 @@ public class Data {
             String line = scanner.nextLine();
 
             ArrayList<String> attributeValues = new ArrayList<>(Arrays.asList(line.split(",")));
+
+            //Target value/label should be the last value in the columns
             String targetValue = attributeValues.get(attributeValues.size() - 1);
 
             LinkedHashMap<String, String> attributeValuePairs = new LinkedHashMap<>();
@@ -47,6 +67,15 @@ public class Data {
         return instanceList;
     }
 
+    /**
+     * @Author Andre Godinez
+     *
+     * Process the attributes from a string array
+     *
+     * @param attributesArray
+     * @return
+     * @throws IOException
+     */
     private ArrayList<Attribute> processAttributes(String[] attributesArray) throws IOException {
 
         ArrayList<Attribute> attributes = new ArrayList<>();
@@ -94,16 +123,6 @@ public class Data {
                 "instanceList=" + instanceList +
                 ", attributes=" + attributes +
                 '}';
-    }
-
-    public static void main(String[] args) throws IOException {
-        String[] attributes = {"body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
-                "type [Barn_Owl,Snowy_Owl,Long-Eared_Owl] target"};
-        String fileName = "owls.csv";
-
-        Data data = new Data(attributes, fileName);
-
-        System.out.println(data);
     }
 
 }

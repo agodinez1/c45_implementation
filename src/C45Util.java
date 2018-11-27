@@ -1,10 +1,6 @@
-import org.w3c.dom.Attr;
-
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class C45Util {
 
@@ -52,7 +48,7 @@ public class C45Util {
         Attribute bestAttribute = null;
 
         for (Attribute currentAttribute: attributes) {
-            double currentGain = gain(instanceList, currentAttribute);
+            double currentGain = gainRatio(instanceList, currentAttribute);
 
             if(currentGain > bestGain) {
                 bestGain = currentGain;
@@ -81,25 +77,28 @@ public class C45Util {
      * @return the information gain
      *
      */
-    public static double gain(List<Instance> instanceList, Attribute attribute) {
+    public static double gainRatio(List<Instance> instanceList, Attribute attribute) {
         //base case
         if (instanceList.isEmpty())
             return 0.0;
 
         if (!attribute.isContinuous()) {
-            return C45Util.entropy(instanceList) - C45Util.conditionalEntropy(instanceList, attribute);
+            return entropy(instanceList) - conditionalEntropy(instanceList, attribute);
+            //TODO: Discrete gain
 
         } else {
-            List<Double> possibleThresholdValues = C45Util.calculatePossibleThresholds(instanceList, attribute);
+            List<Double> possibleThresholdValues = calculatePossibleThresholds(instanceList, attribute);
 
             // Find maximum gain from among possible split points
-            double maxGain = 0.0;
+            double maxGainRatio = 0.0;
 
             for (Double currentThreshold : possibleThresholdValues) {
-                double gain = C45Util.entropy(instanceList) - C45Util.conditionalEntropy(instanceList, attribute, currentThreshold);
+                double gain = entropy(instanceList) - conditionalEntropy(instanceList, attribute, currentThreshold);
+                double splitInfo = splitInfo(instanceList, attribute,currentThreshold);
+                double gainRatio = gain / splitInfo;
 
-                if (gain > maxGain) {
-                    maxGain = gain;
+                if (gainRatio > maxGainRatio) {
+                    maxGainRatio = gain;
 
                     threshold = currentThreshold;
                 }
@@ -107,7 +106,7 @@ public class C45Util {
 
             //TODO stream ^^
 
-            return maxGain;
+            return maxGainRatio;
         }
     }
 
@@ -179,12 +178,33 @@ public class C45Util {
         double prLessThanEqualTo = (double)lessThanEqualTo.size()/(double)totalSize;
         double prGreaterThan = (double)greaterThan.size()/(double) totalSize;
 
-        double entropy = (prLessThanEqualTo * C45Util.entropy(lessThanEqualTo)) + (prGreaterThan * C45Util.entropy(greaterThan));
+        double entropy = (prLessThanEqualTo * entropy(lessThanEqualTo)) + (prGreaterThan * entropy(greaterThan));
 
 
         return entropy;
     }
 
+    public static double splitInfo(List<Instance> instanceList, Attribute attribute, double threshold) {
+        //base case
+        if(instanceList.isEmpty()) {
+            return 0.0;
+        }
+
+        int totalSize = instanceList.size();
+
+        //get all instances and divide them to lessThanEqualTo threshold or greaterThan threshold
+        List<Instance> lessThanEqualTo = instanceList.stream().filter(x -> getAttributeValue(x, attribute) <= threshold).collect(Collectors.toList());
+        List<Instance> greaterThan = instanceList.stream().filter(x -> getAttributeValue(x, attribute) > threshold).collect(Collectors.toList());
+
+        //calculate entropy for each division
+        double prLessThanEqualTo = (double)lessThanEqualTo.size()/(double)totalSize;
+        double prGreaterThan = (double)greaterThan.size()/(double) totalSize;
+
+        double splitInfo = - (prLessThanEqualTo * log2(prLessThanEqualTo)) - (prGreaterThan * log2(prGreaterThan));
+
+
+        return splitInfo;
+    }
 
     /**
      * Calculate conditional entropy for a discrete attribute
@@ -351,7 +371,6 @@ public class C45Util {
         double entropy = C45Util.entropy(data.getInstanceList());
         System.out.println(entropy);
 
-
         // Conditional Entropy with Continuous Values Test
         double conditionalEntropyContinuousTest = C45Util.conditionalEntropy(data.getInstanceList(),data.getAttributes().get(2), (double) 3.0);
         System.out.println(conditionalEntropyContinuousTest);
@@ -359,9 +378,9 @@ public class C45Util {
         // Majority Target Test
         System.out.println(C45Util.majorityTarget(data.getInstanceList()));
 
-        // Gain test
-        double gain = C45Util.gain(data.getInstanceList(),data.getAttributes().get(0));
-        System.out.println(gain);
+        // GainRatio test
+        double gainRatio = C45Util.gainRatio(data.getInstanceList(),data.getAttributes().get(0));
+        System.out.println(gainRatio);
 
         // Best Attribute Test
         Attribute attribute = C45Util.bestAttribute(data.getInstanceList(),data.getAttributes());
