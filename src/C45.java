@@ -1,8 +1,5 @@
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class C45 {
 
@@ -49,7 +46,7 @@ public class C45 {
     }
 
     /**
-     * Testing function that prints out the accuracy of c45 decision tree.
+     * Testing function that returns the accuracy of c45 decision tree.
      *
      * @param instanceList - the list of instances containing test data
      *
@@ -64,15 +61,38 @@ public class C45 {
      * set accuracy = predicted / instanceList.size
      *
      */
-    public void test(List<Instance> instanceList) {
+    public double test(List<Instance> instanceList, Node node) {
 
         long count = instanceList.stream()
-                                    .map(x -> x.getTargetValue().equals(predict(x, decisionTree)))
+                                    .map(x -> x.getTargetValue().equals(predict(x, node)))
                                     .count();
         double accuracy = count / instanceList.size();
         System.out.println("Accuracy : " + accuracy);
-
+        return accuracy;
     }
+
+    /**
+     * Testing function shuffles the instane list and splits it into test and training datasets.
+     *
+     * @param data - input data from file
+     *
+     */
+    public double crossValidation(Data data){
+
+        List<Instance> instanceList = data.getInstanceList();
+        List<Attribute> attributeList = data.getAttributes();
+
+        Collections.shuffle(instanceList);
+        int trainingUpper = (int) Math.floor(instanceList.size() * 0.66);
+        List<Instance> training = instanceList.subList(0, trainingUpper);
+        List<Instance> test = instanceList.subList(trainingUpper, instanceList.size() - 1);
+
+        Node node = c45Learning(training, attributeList, training);
+        double accuracy = test(test, node);
+
+        return accuracy;
+    }
+
 
     /**
      * NB - Only works if the decision tree is built
@@ -204,7 +224,7 @@ public class C45 {
 
         classifier.train(data);
         classifier.printDecisionTree();
-        classifier.test(data.getInstanceList());
+        classifier.test(data.getInstanceList(), classifier.getDecisionTree());
 
         // Testing with random instance value
         LinkedHashMap<String, String> avp = new LinkedHashMap<>();
@@ -216,9 +236,11 @@ public class C45 {
 
         Instance test = new Instance(avp, "Test");
 
-        String predictedValue = classifier.predict(test,classifier.decisionTree);
+        String predictedValue = classifier.predict(test,classifier.getDecisionTree());
 
         System.out.println(predictedValue);
+
+        System.out.println("Tree accuracy : " + classifier.crossValidation(data));
     }
 
 }
