@@ -3,23 +3,29 @@ import java.util.*;
 
 public class C45 {
 
-    // max Depth field
-    public int maxDepth;
-
     // global values for targetAttribute and possible values
     public Attribute targetAttribute;
     public List<String> possibleTargetValues;
 
     public Node decisionTree;
 
+    // minimum instances a decide a node
+    public int minimumInstances;
+
+    // maximum depth of decision tree
+    public int maxDepth;
+
     /**
-     * C45 constructor
-     *
-     * @param maxDepth - maximum number of depth the decisionTree Node can have
+     * Default constructor
      */
-    public C45 (int maxDepth) {
+    public C45() {
+        this.minimumInstances = 10;
+        this.maxDepth = 0;
+    }
+
+    public C45 (int minimumInstances, int maxDepth) {
+        this.minimumInstances = minimumInstances;
         this.maxDepth = maxDepth;
-        //TODO maybe include max depth in the algorithm
     }
 
     public void printDecisionTree() {
@@ -42,7 +48,7 @@ public class C45 {
 
         C45Util.possibleTargetValues = possibleTargetValues;
 
-        this.decisionTree = c45Learning(data.getInstanceList(),data.getAttributes(),data.getInstanceList());
+        this.decisionTree = c45Learning(data.getInstanceList(),data.getAttributes(),data.getInstanceList(),0);
     }
 
     /**
@@ -50,78 +56,86 @@ public class C45 {
      *
      * @param instanceList - the list of instances containing test data
      *
-     * Pseudocode:
-     * set predicted = 0;
-     *
-     * for each instance in instanceList
-     *               predicted = predict(instance, decisionTree)
-     *               if predicted = instance.targetValue
-     *                     predicted++
-     *
-     * set accuracy = predicted / instanceList.size
-     *
      */
-    public double test(List<Instance> instanceList, Node node) {
+    public double accuracy(List<Instance> instanceList, Node node) {
 
         long count = instanceList.stream()
                                     .filter(x -> x.getTargetValue().equals(predict(x, node)))
                                     .count();
+
         double accuracy =  (double) count / instanceList.size();
         return accuracy;
     }
 
+
     /**
-     * Testing function shuffles the instane list and splits it into test and training datasets.
+     * @Author Cillian Fennell
+     *
+     * Testing function shuffles the instance list and splits it into test and training datasets.
      *
      * @param data - input data from file
+     * @param n - num times to do cross validation
+     * @return HashMap of list of accuracies and average accuracy
      *
      */
-    public double crossValidation(Data data, int n){
+    public HashMap<List<Double>,Double> crossValidation(Data data, int n){
+        HashMap<List<Double>, Double> accuracies_average = new HashMap<>();
 
         //Fetch instanceList from input data
         List<Instance> instanceList = data.getInstanceList();
         List<Attribute> attributeList = data.getAttributes();
 
-        //Shuffle list
-        Collections.shuffle(instanceList);
-
-        //Splitting instances into three sub lists
         int first = (int) Math.ceil(instanceList.size() * 0.33);
         int second = (int) Math.ceil(instanceList.size() * 0.66);
         int third = instanceList.size();
 
-        List<Instance> one = instanceList.subList(0, first);
-        List<Instance> two = instanceList.subList(first, second);
-        List<Instance> three = instanceList.subList(second, third);
+        ArrayList<Double> accuracies = new ArrayList<>();
+        double accuracy;
 
-        List<Instance> training = new ArrayList<>();
-        List<Instance> test = new ArrayList<>();
+        for(int i = 0; i < n; i++) {
+            //Shuffle list
+            Collections.shuffle(instanceList);
 
-        int j = n % 3;
+            //Splitting instances into three sub lists
+            List<Instance> one = instanceList.subList(0, first);
+            List<Instance> two = instanceList.subList(first, second);
+            List<Instance> three = instanceList.subList(second, third);
 
-        switch(j){
-            case 0:
-                test = one;
-                training.addAll(two);
-                training.addAll(three);
-                break;
-            case 1:
-                training.addAll(one);
-                test = two;
-                training.addAll(three);
-                break;
-            case 2:
-                training.addAll(one);
-                training.addAll(two);
-                test = three;
-                break;
+            List<Instance> training = new ArrayList<>();
+            List<Instance> test = new ArrayList<>();
+
+            int j = n % 3;
+
+            switch(j){
+                case 0:
+                    test = one;
+                    training.addAll(two);
+                    training.addAll(three);
+                    break;
+                case 1:
+                    training.addAll(one);
+                    test = two;
+                    training.addAll(three);
+                    break;
+                case 2:
+                    training.addAll(one);
+                    training.addAll(two);
+                    test = three;
+                    break;
+            }
+
+            //Use training dataset to fit the model
+            Node node = c45Learning(training, attributeList, training, 0);
+
+            accuracy = accuracy(test, node);
+            System.out.println("Iteration " + (i + 1) + ": " + accuracy);
+            accuracies.add(accuracy);
         }
 
-        //Use training dataset to fit the model
-        Node node = c45Learning(training, attributeList, training);
-        double accuracy = test(test, node);
-
-        return accuracy;
+        Double averageAccuracy = accuracies.stream().mapToDouble(val -> val).average().orElse(0.0);
+        System.out.println("Average accuracy in "+ n +" iterations: " + averageAccuracy);
+        accuracies_average.put(accuracies, averageAccuracy);
+        return accuracies_average;
     }
 
 
@@ -134,29 +148,6 @@ public class C45 {
      * @param node
      * @return the predicted targetValue
      *
-     * Pseudocode:
-     * if the node is a leafnode
-     *      return leafnode targetValue
-     *
-     * if the node is continuous
-     *
-     *      instanceValue = the attribute value the node is looking for i.e. node = body-length < 1 - gets body-length value
-     *
-     *      if(instanceValue <= node.threshold)
-     *          // travel to the left of that node
-     *          return classify(instance, node.getChild(0))
-     *      else
-     *          return classify(instance, node.getChild(1))
-     *
-     * // node is discrete
-     * else
-     *      instanceValue = (attribute value = node.attribute)
-     *      for each child in node.getChildren
-     *
-     *      if(child.value == instanceValue)
-     *          return classify(instance, child)
-     *
-     * return null
      */
     public String predict(Instance instance, Node node) {
         //TODO
@@ -190,11 +181,19 @@ public class C45 {
      * @return
      *
      */
-    public Node c45Learning(List<Instance> instanceList, List<Attribute> attributeList, List<Instance> parentInstances) {
+    public Node c45Learning(List<Instance> instanceList, List<Attribute> attributeList, List<Instance> parentInstances, int depth) {
 
         //base cases
         if(instanceList.isEmpty()) {
             return new LeafNode(C45Util.majorityTarget(parentInstances));
+        }
+
+        if(instanceList.size() < minimumInstances) {
+            return new LeafNode(C45Util.majorityTarget(instanceList));
+        }
+
+        if(depth == maxDepth && maxDepth != 0) {
+            return new LeafNode(C45Util.majorityTarget(instanceList));
         }
 
         if(C45Util.unanimousTarget(instanceList)) {
@@ -231,7 +230,7 @@ public class C45 {
             List<Instance> subsetList = entry.getValue();
 
             if(bestAttribute.isContinuous()) {
-                Node child = c45Learning(subsetList, remainingAttributes, instanceList);
+                Node child = c45Learning(subsetList, remainingAttributes, instanceList , depth + 1 );
                 root.addChild(child);
             } else {
                 remainingAttributes.remove(bestAttribute);
@@ -251,29 +250,26 @@ public class C45 {
 
         Data data = new Data(attributes, fileName);
 
-        C45 classifier = new C45(0);
+        C45 classifier = new C45(10,3);
 
         classifier.train(data);
         classifier.printDecisionTree();
-        classifier.test(data.getInstanceList(), classifier.getDecisionTree());
+        classifier.accuracy(data.getInstanceList(), classifier.getDecisionTree());
 
         // Testing with random instance value
         LinkedHashMap<String, String> avp = new LinkedHashMap<>();
 
         avp.put("body-length", "3");
-        avp.put("wing-length","6.1");
-        avp.put("body-width","4.5");
+        avp.put("wing-length", "6.1");
+        avp.put("body-width", "4.5");
         avp.put("wing-width", "1");
 
         Instance test = new Instance(avp, "Test");
 
-        String predictedValue = classifier.predict(test,classifier.getDecisionTree());
+        String predictedValue = classifier.predict(test, classifier.getDecisionTree());
 
         System.out.println(predictedValue);
 
-        for(int i = 1; i <= 10; i++)
-            System.out.println("Tree accuracy : " + classifier.crossValidation(data, i));
-
+        HashMap<List<Double>, Double> accuracies_average = classifier.crossValidation(data, 10);
     }
-
 }
