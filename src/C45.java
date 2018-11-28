@@ -83,9 +83,9 @@ public class C45 {
             predicted = predict(instance, node);
 
             if(actual.equals(predicted)) {
-                out.println(String.format("t%-20s %-20s", actual, predicted));
+                out.println(String.format("%-20s %-20s", actual, predicted));
             } else {
-                out.println(String.format("t%-20s %-20s             X", actual, predicted));
+                out.println(String.format("%-20s %-20s             X", actual, predicted));
             }
 
         }
