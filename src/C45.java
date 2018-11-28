@@ -64,10 +64,9 @@ public class C45 {
     public double test(List<Instance> instanceList, Node node) {
 
         long count = instanceList.stream()
-                                    .map(x -> x.getTargetValue().equals(predict(x, node)))
+                                    .filter(x -> x.getTargetValue().equals(predict(x, node)))
                                     .count();
-        double accuracy = count / instanceList.size();
-        System.out.println("Accuracy : " + accuracy);
+        double accuracy =  (double) count / instanceList.size();
         return accuracy;
     }
 
@@ -77,16 +76,48 @@ public class C45 {
      * @param data - input data from file
      *
      */
-    public double crossValidation(Data data){
+    public double crossValidation(Data data, int n){
 
+        //Fetch instanceList from input data
         List<Instance> instanceList = data.getInstanceList();
         List<Attribute> attributeList = data.getAttributes();
 
+        //Shuffle list
         Collections.shuffle(instanceList);
-        int trainingUpper = (int) Math.floor(instanceList.size() * 0.66);
-        List<Instance> training = instanceList.subList(0, trainingUpper);
-        List<Instance> test = instanceList.subList(trainingUpper, instanceList.size() - 1);
 
+        //Splitting instances into three sub lists
+        int first = (int) Math.ceil(instanceList.size() * 0.33);
+        int second = (int) Math.ceil(instanceList.size() * 0.66);
+        int third = instanceList.size();
+
+        List<Instance> one = instanceList.subList(0, first);
+        List<Instance> two = instanceList.subList(first, second);
+        List<Instance> three = instanceList.subList(second, third);
+
+        List<Instance> training = new ArrayList<>();
+        List<Instance> test = new ArrayList<>();
+
+        int j = n % 3;
+
+        switch(j){
+            case 0:
+                test = one;
+                training.addAll(two);
+                training.addAll(three);
+                break;
+            case 1:
+                training.addAll(one);
+                test = two;
+                training.addAll(three);
+                break;
+            case 2:
+                training.addAll(one);
+                training.addAll(two);
+                test = three;
+                break;
+        }
+
+        //Use training dataset to fit the model
         Node node = c45Learning(training, attributeList, training);
         double accuracy = test(test, node);
 
@@ -240,7 +271,9 @@ public class C45 {
 
         System.out.println(predictedValue);
 
-        System.out.println("Tree accuracy : " + classifier.crossValidation(data));
+        for(int i = 1; i <= 10; i++)
+            System.out.println("Tree accuracy : " + classifier.crossValidation(data, i));
+
     }
 
 }
