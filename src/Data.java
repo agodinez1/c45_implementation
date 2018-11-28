@@ -58,7 +58,7 @@ public class Data {
 
             LinkedHashMap<String, String> attributeValuePairs = new LinkedHashMap<>();
 
-            for (int i = 0; i < attributeValues.size(); i++) {
+            for (int i = 0; i < attributeValues.size() - 1; i++) {
                 attributeValuePairs.put(this.attributes.get(i).getName(), attributeValues.get(i));
             }
 

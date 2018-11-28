@@ -1,7 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @Author Andre Godinez
+ *
+ * Abstract class to represent Node
+ *
+ */
 public abstract class Node {
 
     protected List<Node> children;

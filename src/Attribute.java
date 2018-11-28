@@ -1,12 +1,32 @@
 import java.util.List;
 
+/**
+ * @Author Andre Godinez
+ *
+ * Attribute class
+ *
+ */
 public class Attribute {
 
+    // attribute name
     private String name;
+
+    // list possible values for this attribute
     private List<String> possibleValues;
+
+    // if the attribute is continuous
     private boolean isContinuous;
+
+    // if the attribute is the target attribute
     private boolean isTarget;
 
+    /**
+     * Attribute constructor
+     *
+     * @param name
+     * @param possibleValues
+     * @param isTarget
+     */
     public Attribute(String name, List<String> possibleValues, boolean isTarget) {
         this.name = name;
         this.possibleValues = possibleValues;

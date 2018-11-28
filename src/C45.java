@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,8 +114,7 @@ public class C45 {
         }
 
         if(node instanceof ContinuousNode){
-            double instanceValue = Double.parseDouble(instance.getAttributeValues()
-                                                        .get(((ContinuousNode) node).getName()));
+            double instanceValue = Double.parseDouble(instance.getAttributeValues().get(((ContinuousNode) node).getName()));
 
             if(instanceValue <= ((ContinuousNode) node).getThreshold()){
                 return predict(instance, node.children.get(0));
@@ -204,8 +204,21 @@ public class C45 {
 
         classifier.train(data);
         classifier.printDecisionTree();
-        System.out.println("Predicted Value : " + classifier.predict(data.getInstanceList().get(100), classifier.getDecisionTree()));
         classifier.test(data.getInstanceList());
+
+        // Testing with random instance value
+        LinkedHashMap<String, String> avp = new LinkedHashMap<>();
+
+        avp.put("body-length", "3");
+        avp.put("wing-length","6.1");
+        avp.put("body-width","4.5");
+        avp.put("wing-width", "1");
+
+        Instance test = new Instance(avp, "Test");
+
+        String predictedValue = classifier.predict(test,classifier.decisionTree);
+
+        System.out.println(predictedValue);
     }
 
 }
