@@ -8,7 +8,6 @@ public class C45Util {
     public static double threshold;
     public static double bestThreshold;
 
-
     /**
      *
      * @Author Andre Godinez
@@ -43,26 +42,10 @@ public class C45Util {
      */
     public static Attribute bestAttribute(List<Instance> instanceList, List<Attribute> attributes) {
 
-        double bestGain = 0.0;
-
-        Attribute bestAttribute = null;
-
-        for (Attribute currentAttribute: attributes) {
-            double currentGain = gainRatio(instanceList, currentAttribute);
-
-            if(currentGain > bestGain) {
-                bestGain = currentGain;
-                bestAttribute = currentAttribute;
-
-                bestThreshold = threshold;
-            }
-        }
-
-        //TODO stream ^^
-
-        if(bestGain < 0.0) {
-            return null;
-        }
+        Attribute bestAttribute = attributes.stream()
+                            .reduce((Attribute a, Attribute b) ->  gainRatio(instanceList, a) < gainRatio(instanceList, b) ? b:a)
+                            .orElse(null);
+        bestThreshold = bestAttribute.getThreshold();
 
         return bestAttribute;
     }
@@ -82,11 +65,7 @@ public class C45Util {
         if (instanceList.isEmpty())
             return 0.0;
 
-        if (!attribute.isContinuous()) {
-            return entropy(instanceList) - conditionalEntropy(instanceList, attribute);
-            //TODO: Discrete gain
-
-        } else {
+        if (attribute.isContinuous()){
             List<Double> possibleThresholdValues = calculatePossibleThresholds(instanceList, attribute);
 
             // Find maximum gain from among possible split points
@@ -101,6 +80,7 @@ public class C45Util {
                     maxGainRatio = gain;
 
                     threshold = currentThreshold;
+                    attribute.setThreshold(threshold);
                 }
             }
 
@@ -108,6 +88,8 @@ public class C45Util {
 
             return maxGainRatio;
         }
+
+        return 0.0;
     }
 
     /**
@@ -180,7 +162,6 @@ public class C45Util {
 
         double entropy = (prLessThanEqualTo * entropy(lessThanEqualTo)) + (prGreaterThan * entropy(greaterThan));
 
-
         return entropy;
     }
 
@@ -202,55 +183,7 @@ public class C45Util {
 
         double splitInfo = - (prLessThanEqualTo * log2(prLessThanEqualTo)) - (prGreaterThan * log2(prGreaterThan));
 
-
         return splitInfo;
-    }
-
-    /**
-     * Calculate conditional entropy for a discrete attribute
-     *
-     * @param instances
-     * @param attribute
-     * @return entropy
-     *
-     * Pseudocode:
-     *
-     * //base case
-     * if instances is empty
-     *  return 0
-     *
-     * //
-     * totalSize = instances.size
-     *
-     * // initialise attribute value and the list of instances that have that value
-     * LinkedHashMap String List <Instances> subsets
-     *
-     * for each possibleValue in attribute.values
-     *      put(possibleValue , new Instance List)
-     *
-     *
-     * for each instance in instanceList
-     *      //get the subset we put in the attribute name is equal to for this instance
-     *      //then add this instance there
-     *      List<Instance> subset = subsets.get(instance.values.get(attribute.name)
-     *      subset.add(instance)
-     *
-     * //calculate entropy for this attribute
-     *
-     * double entropy = 0.0
-     * for each subset in subsets.values
-     *      double pr = subset.size/totalsize
-     *
-     *      entropy+= pr*entropy(subset)
-     *
-     *  return entropy
-     *
-     *
-     */
-    public static double conditionalEntropy(List<Instance> instances, Attribute attribute) {
-        //TODO Discrete Values
-
-        return 0;
     }
 
     /**
@@ -323,10 +256,9 @@ public class C45Util {
     /**
      * @Author Cillian Fennell
      *
-     * Returns the majority targetvalue from the instanceList
+     * Returns the majority targetValue from the instanceList
      * @param instanceList
-     * @return
-     *
+     * @return majority targetValue from the instanceList
      *
      */
     public static String majorityTarget(List<Instance> instanceList) {

@@ -20,6 +20,9 @@ public class Attribute {
     // if the attribute is the target attribute
     private boolean isTarget;
 
+    //threshold associated with this attribute
+    private double threshold;
+
     /**
      * Attribute constructor
      *
@@ -32,6 +35,7 @@ public class Attribute {
         this.possibleValues = possibleValues;
         this.isTarget = isTarget;
         this.isContinuous = this.possibleValues.size() > 1 ? false: true;
+        this.threshold = getThreshold();
     }
 
     public String getName() {
@@ -48,6 +52,14 @@ public class Attribute {
 
     public boolean isTarget() {
         return this.isTarget;
+    }
+
+    public double getThreshold(){
+        return threshold;
+    }
+
+    public void setThreshold(double threshold){
+        this.threshold = threshold;
     }
 
     @Override
