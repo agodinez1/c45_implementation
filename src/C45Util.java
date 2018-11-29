@@ -212,42 +212,20 @@ public class C45Util {
      */
     public static List<Double> calculatePossibleThresholds (List<Instance> instanceList, Attribute attribute) {
 
-        List<Double> possibleThresholdValues = new ArrayList<>();
-
-        // add all attribute values as possible thresholds
-        double currentInstanceAttributeValue;
-
-        for (Instance instance : instanceList) {
-            currentInstanceAttributeValue = Double.parseDouble(instance.getAttributeValues().get(attribute.getName()));
-            possibleThresholdValues.add(currentInstanceAttributeValue);
-        }
-
-        //possibleThresholdValues = instanceList.stream().mapToDouble(x -> Double.parseDouble(x.getAttributeValues().get(attribute.getName())))
-        //                                                .collect(Collectors.toList());
-
-        possibleThresholdValues = possibleThresholdValues.stream().distinct().collect(Collectors.toList());
-        Collections.<Double>sort(possibleThresholdValues);
-
-        //TODO change above code into a stream ^^
-
-        // add more thresholds by calculating the mean of 2 values beside each other
-        List<Double> meanThresholdValues = new ArrayList<>();
-
-        Iterator<Double> num1 = possibleThresholdValues.iterator();
-        Iterator<Double> num2 = possibleThresholdValues.iterator();
-
-        // skip first number for 2nd iterator
-        if (num2.hasNext()) num2.next();
-        while (num2.hasNext()) meanThresholdValues.add((num1.next() + num2.next()) / 2);
-
-        //TODO can this be done without an Iterator type? ^^
-
-        // merge the two lists
-        // remove all duplicates in both
-        meanThresholdValues = meanThresholdValues.stream().distinct().collect(Collectors.toList());
-
-        possibleThresholdValues.addAll(meanThresholdValues);
+        //List of distinct threshold values
+        List<Double> possibleThresholdValues = instanceList.stream()
+                .map(x -> Double.parseDouble(x.getAttributeValues().get(attribute.getName())))
+                .distinct()
+                .collect(Collectors.toList());
+        //Sort list so that averages can be calculated
         Collections.sort(possibleThresholdValues);
+
+        //Increasing size of possibleThreshold values by adding averages of pairs
+        int size = possibleThresholdValues.size() - 1;
+        for(int i = 0; i < size; i++){
+            double mean = (possibleThresholdValues.get(i) + possibleThresholdValues.get(i + 1))/2;
+            possibleThresholdValues.add(mean);
+        }
 
         return possibleThresholdValues;
     }
