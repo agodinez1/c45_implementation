@@ -66,7 +66,7 @@ public class C45 {
      */
     public double accuracy(List<Instance> instanceList, Node node) {
 
-        //
+        //Count of instances whose actual targetValue is equal to predicted
         long count = instanceList.stream()
                                     .filter(x -> x.getTargetValue().equals(predict(x, node)))
                                     .count();
