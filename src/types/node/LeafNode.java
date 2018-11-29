@@ -1,7 +1,5 @@
 package types.node;
 
-import types.node.Node;
-
 /**
  * @Author Andre Godinez
  *

@@ -10,7 +10,6 @@ import types.*;
 import data.*;
 import util.*;
 
-
 public class C45 {
 
     // global values for targetAttribute and possible values
