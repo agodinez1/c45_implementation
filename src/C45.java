@@ -39,7 +39,8 @@ public class C45 {
         return decisionTree;
     }
 
-    /**
+    /** @Author Andre Godinez
+     *
      * Training function given data of instances and attributes
      *
      * @param data - the data object containing the attributes and instances
@@ -51,17 +52,21 @@ public class C45 {
 
         C45Util.possibleTargetValues = possibleTargetValues;
 
-        this.decisionTree = c45Learning(data.getInstanceList(),data.getAttributes(),data.getInstanceList(),0);
+        this.decisionTree = fit(data.getInstanceList(),data.getAttributes(),data.getInstanceList(),0);
     }
 
-    /**
+    /** @Author Cillian Fennell
+     *
      * Testing function that returns the accuracy of c45 decision tree.
      *
      * @param instanceList - the list of instances containing test data
+     * @param node - build decision tree
+     * @return accuracy
      *
      */
     public double accuracy(List<Instance> instanceList, Node node) {
 
+        //
         long count = instanceList.stream()
                                     .filter(x -> x.getTargetValue().equals(predict(x, node)))
                                     .count();
@@ -71,6 +76,17 @@ public class C45 {
     }
 
 
+    /**
+     * @Author Cillian Fennell
+     *
+     * Prints out actual vs expected targetValues to txt file, marks incorrect classifications with an 'X'
+     *
+     * @param instanceList
+     * @param node - built decision tree
+     * @param iteration
+     * @param out
+     *
+     */
     public void outputActualPredicted(List<Instance> instanceList, Node node, int iteration, PrintWriter out) throws FileNotFoundException, UnsupportedEncodingException {
         out.println("=========================== Iteration " + (iteration + 1) +"============================");
         out.println(String.format("%-20s %-20s", "Actual", "Predicted"));
@@ -148,7 +164,7 @@ public class C45 {
             }
 
             //Use training dataset to fit the model
-            Node node = c45Learning(training, attributeList, training, 0);
+            Node node = fit(training, attributeList, training, 0);
 
             accuracy = 100.0 * accuracy(test, node);
             outputActualPredicted(test,node,i,out);
@@ -167,7 +183,8 @@ public class C45 {
     }
 
 
-    /**
+    /** @Author Cillian Fennell
+     *
      * NB - Only works if the decision tree is built
      *
      * Predicts the targetValue given the instance and the decisionTree
@@ -178,38 +195,34 @@ public class C45 {
      *
      */
     public String predict(Instance instance, Node node) {
-        //TODO
+        //Return targetValue if current node is a leaf node
         if(node instanceof LeafNode){
             return ((LeafNode) node).targetValue;
         }
 
-        if(node instanceof ContinuousNode){
-            double instanceValue = Double.parseDouble(instance.getAttributeValues().get(((ContinuousNode) node).getName()));
+        //Extract attribute value as double
+        double instanceValue = Double.parseDouble(instance.getAttributeValues().get(((ContinuousNode) node).getName()));
 
-            if(instanceValue <= ((ContinuousNode) node).getThreshold()){
-                return predict(instance, node.children.get(0));
-            }else{
-                return predict(instance, node.children.get(1));
-            }
-
+        //Recursively call method until current node is leaf node
+        if(instanceValue <= ((ContinuousNode) node).getThreshold()){
+            return predict(instance, node.children.get(0));
         }else{
-            //TODO Discrete values
+            return predict(instance, node.children.get(1));
         }
-
-        return null;
     }
 
 
-    /**
+    /** @Author Andre Godinez
+     *
      * Creates a decision tree with child nodes given an instanceList and attributeList
      *
      * @param instanceList
      * @param attributeList
      * @param parentInstances
-     * @return
+     * @return Node - built Decision Tree
      *
      */
-    public Node c45Learning(List<Instance> instanceList, List<Attribute> attributeList, List<Instance> parentInstances, int depth) {
+    public Node fit(List<Instance> instanceList, List<Attribute> attributeList, List<Instance> parentInstances, int depth) {
 
         //base cases
         if(instanceList.isEmpty()) {
@@ -235,38 +248,20 @@ public class C45 {
             return new LeafNode(C45Util.majorityTarget(instanceList));
         }
         
-        Node root;
         double currentThreshold = C45Util.bestThreshold;
-        HashMap<String, List<Instance>> subsets = new HashMap<>();
-        
-        if(bestAttribute.isContinuous()) {
+        Node root = new ContinuousNode(bestAttribute.getName());
+        ((ContinuousNode) root).setThreshold(currentThreshold);
 
-            root = new ContinuousNode(bestAttribute.getName());
-            ((ContinuousNode) root).setThreshold(currentThreshold);
-
-            subsets = C45Util.subsetInstanceListContinuous(bestAttribute,instanceList,currentThreshold);
-
-        } else {
-            //TODO - Discrete Values lessThanEqualTo will be null here
-            root = new DiscreteNode();
-        }
+        HashMap<String, List<Instance>> subsets = C45Util.subsetInstanceListContinuous(bestAttribute,instanceList,currentThreshold);
 
         for (Map.Entry<String, List<Instance>> entry : subsets.entrySet()) {
             List<Attribute> remainingAttributes = attributeList;
 
-            String key = entry.getKey();
             List<Instance> subsetList = entry.getValue();
 
-            if(bestAttribute.isContinuous()) {
-                Node child = c45Learning(subsetList, remainingAttributes, instanceList , depth + 1 );
-                root.addChild(child);
-            } else {
-                remainingAttributes.remove(bestAttribute);
-                //TODO : Create different node child for discrete value
-            }
+            Node child = fit(subsetList, remainingAttributes, instanceList , depth + 1 );
+            root.addChild(child);
         }
-
-        //TODO stream ^^
 
         return root;
     }

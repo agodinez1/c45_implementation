@@ -8,9 +8,7 @@ public class C45Util {
     public static double threshold;
     public static double bestThreshold;
 
-    /**
-     *
-     * @Author Andre Godinez
+    /** @Author Cillian Fennell
      *
      * Subset an instance list for continuous values given an attribute
      *
@@ -31,8 +29,10 @@ public class C45Util {
         return subsets;
     }
 
+
+
     /**
-     * @Author Andre Godinez
+     * @Author Cillian Fennell
      *
      * Gets the best attribute from a list of instances and attributes
      *
@@ -50,8 +50,9 @@ public class C45Util {
         return bestAttribute;
     }
 
+
     /**
-     * @Author Cillian Fennell
+     * @Author Andre Godinez
      *
      * Calculate the information gain over instances for an attribute
      *
@@ -84,13 +85,13 @@ public class C45Util {
                 }
             }
 
-            //TODO stream ^^
-
             return maxGainRatio;
         }
 
         return 0.0;
     }
+
+
 
     /**
      * @Author Andre Godinez
@@ -125,10 +126,9 @@ public class C45Util {
             count = 0;
         }
 
-        //TODO stream ^^
-
         return -(entropy);
     }
+
 
 
     /**
@@ -165,6 +165,16 @@ public class C45Util {
         return entropy;
     }
 
+
+    /** @Author Cillian Fennell
+     *
+     * Returns value that is used to calculate gain ratio
+     *
+     * @param instanceList - list of instances
+     * @param attribute
+     * @param threshold
+     * @return splitInfo
+     */
     public static double splitInfo(List<Instance> instanceList, Attribute attribute, double threshold) {
         //base case
         if(instanceList.isEmpty()) {
@@ -214,7 +224,7 @@ public class C45Util {
 
         //List of distinct threshold values
         List<Double> possibleThresholdValues = instanceList.stream()
-                .map(x -> Double.parseDouble(x.getAttributeValues().get(attribute.getName())))
+                .map(x -> getAttributeValue(x, attribute))
                 .distinct()
                 .collect(Collectors.toList());
         //Sort list so that averages can be calculated
@@ -268,33 +278,4 @@ public class C45Util {
 
         return true;
     }
-
-    public static void main (String[] args) throws IOException {
-        // Testing functions
-        String[] attributes = {"body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
-                "type [BarnOwl,SnowyOwl,LongEaredOwl] target"};
-        String fileName = "owls.csv";
-
-        Data data = new Data(attributes, fileName);
-
-        // Entropy test
-        double entropy = C45Util.entropy(data.getInstanceList());
-        System.out.println(entropy);
-
-        // Conditional Entropy with Continuous Values Test
-        double conditionalEntropyContinuousTest = C45Util.conditionalEntropy(data.getInstanceList(),data.getAttributes().get(2), (double) 3.0);
-        System.out.println(conditionalEntropyContinuousTest);
-
-        // Majority Target Test
-        System.out.println(C45Util.majorityTarget(data.getInstanceList()));
-
-        // GainRatio test
-        double gainRatio = C45Util.gainRatio(data.getInstanceList(),data.getAttributes().get(0));
-        System.out.println(gainRatio);
-
-        // Best Attribute Test
-        Attribute attribute = C45Util.bestAttribute(data.getInstanceList(),data.getAttributes());
-        System.out.println(attribute);
-    }
-
 }

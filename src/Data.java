@@ -2,12 +2,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-
-/**
- * @Author Andre Godinez
- *
- * Process data into a list of instances and attributes
- */
 public class Data {
 
     private List<Instance> instanceList;
@@ -37,7 +31,8 @@ public class Data {
         return attributes.get(attributes.size() - 1);
     }
 
-    /**
+    /** @Author Andre Godinez
+     *
      * Process instanceList from a file, attributes should be populated before running this.
      *
      * @param fileName
@@ -68,7 +63,7 @@ public class Data {
     }
 
     /**
-     * @Author Andre Godinez
+     * @Author Cillian Fennell
      *
      * Process the attributes from a string array
      *
