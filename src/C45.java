@@ -101,9 +101,8 @@ public class C45 {
      * @return HashMap of list of accuracies and average accuracy
      *
      */
-    public HashMap<List<Double>,Double> crossValidation(Data data, int n) throws FileNotFoundException, UnsupportedEncodingException {
+    public void crossValidation(Data data, int n) throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter  out = new PrintWriter("actual_predicted.txt", "UTF-8");
-        HashMap<List<Double>, Double> accuracies_average = new HashMap<>();
 
         //Fetch instanceList from input data
         List<Instance> instanceList = data.getInstanceList();
@@ -151,22 +150,20 @@ public class C45 {
             //Use training dataset to fit the model
             Node node = c45Learning(training, attributeList, training, 0);
 
-            accuracy = accuracy(test, node);
+            accuracy = 100.0 * accuracy(test, node);
             outputActualPredicted(test,node,i,out);
 
-            System.out.println("Iteration " + (i + 1) + ": " + accuracy);
+            System.out.println("Iteration " + (i + 1) + ": " + Math.round(accuracy) + "%");
             accuracies.add(accuracy);
         }
 
         Double averageAccuracy = accuracies.stream().mapToDouble(val -> val).average().orElse(0.0);
-        System.out.println("Average accuracy in "+ n +" iterations: " + averageAccuracy);
-        accuracies_average.put(accuracies, averageAccuracy);
+        System.out.println("Average accuracy in "+ n +" iterations: " + Math.round(averageAccuracy) + "%");
 
         System.out.println("Flushing...");
         out.flush();
         out.close();
         System.out.println("Done");
-        return accuracies_average;
     }
 
 
@@ -301,6 +298,6 @@ public class C45 {
 
         System.out.println(predictedValue);
 
-        HashMap<List<Double>, Double> accuracies_average = classifier.crossValidation(data, 10);
+        classifier.crossValidation(data, 10);
     }
 }
