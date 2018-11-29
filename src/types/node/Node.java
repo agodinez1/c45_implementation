@@ -1,15 +1,17 @@
+package types.node;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @Author Andre Godinez
  *
- * Abstract class to represent Node
+ * Abstract class to represent types.node.Node
  *
  */
 public abstract class Node {
 
-    protected List<Node> children;
+    public List<Node> children;
 
     public Node() {
         children = new ArrayList<>();

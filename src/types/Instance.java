@@ -1,9 +1,11 @@
+package types;
+
 import java.util.LinkedHashMap;
 
 /**
  * @Author Andre Godinez
  *
- * Instance class
+ * types.Instance class
  *
  */
 public class Instance {
@@ -15,7 +17,7 @@ public class Instance {
     private LinkedHashMap<String, String> attributeValues;
 
     /**
-     * Instance constructor
+     * types.Instance constructor
      *
      * @param attributeValues
      * @param targetValue
@@ -35,7 +37,7 @@ public class Instance {
 
     @Override
     public String toString() {
-        return "Instance{" +
+        return "types.Instance{" +
                 "targetValue='" + targetValue + '\'' +
                 ", attributeValues=" + attributeValues +
                 '}';

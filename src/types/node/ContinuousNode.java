@@ -1,3 +1,5 @@
+package types.node;
+
 /**
  * @Author Andre Godinez
  *

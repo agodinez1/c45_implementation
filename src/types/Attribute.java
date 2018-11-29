@@ -1,9 +1,11 @@
+package types;
+
 import java.util.List;
 
 /**
  * @Author Andre Godinez
  *
- * Attribute class
+ * types.Attribute class
  *
  */
 public class Attribute {
@@ -24,7 +26,7 @@ public class Attribute {
     private double threshold;
 
     /**
-     * Attribute constructor
+     * types.Attribute constructor
      *
      * @param name
      * @param possibleValues
@@ -64,7 +66,7 @@ public class Attribute {
 
     @Override
     public String toString() {
-        return "Attribute{" +
+        return "types.Attribute{" +
                 "name='" + name + '\'' +
                 ", possibleValues=" + possibleValues +
                 ", isContinuous=" + isContinuous +

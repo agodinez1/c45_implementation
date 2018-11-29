@@ -1,6 +1,10 @@
+package data;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import types.Attribute;
+import types.Instance;
 
 public class Data {
 
@@ -8,7 +12,7 @@ public class Data {
     private List<Attribute> attributes;
 
     /**
-     * Constructor for Data class
+     * Constructor for data.Data class
      *
      * @param attributesArray - the attributes in string array format
      * @param fileName - the file name containing data
@@ -114,7 +118,7 @@ public class Data {
 
     @Override
     public String toString() {
-        return "Data{" +
+        return "data.Data{" +
                 "instanceList=" + instanceList +
                 ", attributes=" + attributes +
                 '}';

@@ -1,8 +1,15 @@
+package classifier;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import types.node.*;
+import types.*;
+import data.*;
+import util.*;
+
 
 public class C45 {
 
@@ -219,7 +226,7 @@ public class C45 {
      * @param instanceList
      * @param attributeList
      * @param parentInstances
-     * @return Node - built Decision Tree
+     * @return types.node.Node - built Decision Tree
      *
      */
     public Node fit(List<Instance> instanceList, List<Attribute> attributeList, List<Instance> parentInstances, int depth) {
