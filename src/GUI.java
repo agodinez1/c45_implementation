@@ -15,9 +15,8 @@ import java.util.LinkedHashMap;
 
 /**
  * @Author Andre Godinez
- *
+ * <p>
  * GUI for C4.5 Decision Tree classifier
- *
  */
 public class GUI {
     private JPanel panel1;
@@ -43,6 +42,7 @@ public class GUI {
     private JTextField predictionAttributes;
     private JButton predictButton;
     private JLabel attributeLabels;
+    private JButton restartButton;
 
     // List of default attributes for assignment
     private String[] defaultAssignmentValues = {"body-length real n", "wing-length real n", "body-width real n", "wing-width real n",
@@ -78,6 +78,20 @@ public class GUI {
         addAttribute.setEnabled(false);
     }
 
+
+    private void enableAttributeForm() {
+        finishButton.setEnabled(true);
+        defaultAssignmentValuesButton.setEnabled(true);
+        yesCheckBox.setEnabled(true);
+        noCheckBox.setEnabled(true);
+        realCheckBox.setEnabled(true);
+        discreteCheckBox.setEnabled(true);
+        possibleTargetValues.setEnabled(true);
+        attributeName.setEnabled(true);
+        addAttribute.setEnabled(true);
+    }
+
+
     private void enableFileInput() {
         fileNameInput.setEnabled(true);
         loadDataButton.setEnabled(true);
@@ -107,9 +121,19 @@ public class GUI {
         crossValidationAccuracyButton.setEnabled(true);
     }
 
+    private void disabledClassifierFunctions() {
+        printDecisionTreeButton.setEnabled(false);
+        crossValidationAccuracyButton.setEnabled(false);
+    }
+
     private void enablePredictFunctions() {
         predictButton.setEnabled(true);
         predictionAttributes.setEnabled(true);
+    }
+
+    private void disablePredictFunctions() {
+        predictButton.setEnabled(false);
+        predictionAttributes.setEnabled(false);
     }
 
     // populate the attribute labels with this text
@@ -125,6 +149,10 @@ public class GUI {
         }
 
         attributeLabels.setText(superStr);
+    }
+
+    private void clearPredictionAttributes() {
+        attributeLabels.setText("- -");
     }
 
     public GUI() {
@@ -385,6 +413,18 @@ public class GUI {
 
                 populatePredictionAttributes();
                 updateLog();
+            }
+        });
+
+        restartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enableAttributeForm();
+                disableClassifierSettings();
+                disabledClassifierFunctions();
+                disablePredictFunctions();
+                clearPredictionAttributes();
+                attrList.clear();
             }
         });
     }

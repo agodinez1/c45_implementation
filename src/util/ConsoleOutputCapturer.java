@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Captures the last console output as a string - to be used for GUI
  * source:
+ *
  * https://stackoverflow.com/questions/8708342/redirect-console-output-to-string-in-java
  */
 public class ConsoleOutputCapturer {
