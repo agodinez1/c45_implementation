@@ -83,7 +83,7 @@ public class C45 {
 
 
     /**
-     * @Author Cillian Fennell
+     * @Author Andre Godinez
      *
      * Prints out actual vs expected targetValues to txt file, marks incorrect classifications with an 'X'
      *
