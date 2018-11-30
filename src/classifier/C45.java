@@ -248,10 +248,11 @@ public class C45 {
         //get the best attribute - attribute with most gain
         Attribute bestAttribute = C45Util.bestAttribute(instanceList,attributeList);
 
-        if(bestAttribute.equals(null)) {
+        if(bestAttribute.equals(0.0)) {
             return new LeafNode(C45Util.majorityTarget(instanceList));
         }
-        
+
+        //get related best threshold with this
         double currentThreshold = C45Util.bestThreshold;
         Node root = new ContinuousNode(bestAttribute.getName());
         ((ContinuousNode) root).setThreshold(currentThreshold);

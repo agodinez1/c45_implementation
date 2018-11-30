@@ -398,21 +398,27 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 String[] attrAtt = predictionAttributes.getText().split(",");
 
-                LinkedHashMap<String, String> attributeValuePairs = new LinkedHashMap<>();
+                if(attrAtt.length < attrList.size() - 1) {
+                    log+="Invalid input... \n";
 
-                for (int i = 0; i < attrList.size() - 1; i++) {
-                    attributeValuePairs.put(attrList.get(i), attrAtt[i]);
+                    updateLog();
+                } else {
+                    LinkedHashMap<String, String> attributeValuePairs = new LinkedHashMap<>();
+
+                    for (int i = 0; i < attrList.size() - 1; i++) {
+                        attributeValuePairs.put(attrList.get(i), attrAtt[i]);
+                    }
+
+                    Instance instance = new Instance(attributeValuePairs, "");
+
+                    String predicted = classifier.predict(instance, classifier.decisionTree);
+
+
+                    log += "Predicted value: " + predicted + "\n";
+
+                    populatePredictionAttributes();
+                    updateLog();
                 }
-
-                Instance instance = new Instance(attributeValuePairs, "");
-
-                String predicted = classifier.predict(instance, classifier.decisionTree);
-
-
-                log += "Predicted value: " + predicted + "\n";
-
-                populatePredictionAttributes();
-                updateLog();
             }
         });
 

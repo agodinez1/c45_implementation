@@ -22,7 +22,7 @@ public class Attribute {
     // if the attribute is the target attribute
     private boolean isTarget;
 
-    //threshold associated with this attribute
+    //threshold associated with this attribute if any
     private double threshold;
 
     /**
