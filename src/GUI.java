@@ -329,7 +329,7 @@ public class GUI {
 
                 classifier.printDecisionTree();
 
-                log += outputCapturer.stop() + "\n END DECISION TREE\n";
+                log += outputCapturer.stop() + "\n END DECISION TREE\n\n";
                 updateLog();
             }
         });
@@ -348,7 +348,7 @@ public class GUI {
 
                     classifier.crossValidation(data, 10);
 
-                    log += outputCapturer.stop() + "\n END CROSS VALIDATION\n";
+                    log += outputCapturer.stop() + "\n END CROSS VALIDATION\n\n";
                     updateLog();
                 } catch (FileNotFoundException e1) {
                     e1.printStackTrace();

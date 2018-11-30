@@ -182,10 +182,8 @@ public class C45 {
         Double averageAccuracy = accuracies.stream().mapToDouble(val -> val).average().orElse(0.0);
         System.out.println("Average accuracy in "+ n +" iterations: " + Math.round(averageAccuracy) + "%");
 
-        System.out.println("Flushing...");
         out.flush();
         out.close();
-        System.out.println("Done");
     }
 
 

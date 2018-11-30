@@ -42,7 +42,7 @@ public class ContinuousNode extends Node {
                 name += ">";
             }
             name += threshold;
-            System.out.println(prefix + "├── " + name);
+            System.out.println(prefix + "|-- " + name);
             child.print(prefix +  "|        ");
 
             index++;
