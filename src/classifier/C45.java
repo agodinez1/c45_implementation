@@ -83,13 +83,8 @@ public class C45 {
 
 
     /**
-<<<<<<< Updated upstream
      * @Author Cillian Fennell
      *
-=======
-     * @Author Andre Godinez
-     *g
->>>>>>> Stashed changes
      * Prints out actual vs expected targetValues to txt file, marks incorrect classifications with an 'X'
      *
      * @param instanceList
