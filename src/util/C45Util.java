@@ -226,22 +226,24 @@ public class C45Util {
      */
     public static List<Double> calculatePossibleThresholds (List<Instance> instanceList, Attribute attribute) {
 
-        //List of distinct threshold values
-        List<Double> possibleThresholdValues = instanceList.stream()
+        //List of distinct attribute values
+        List<Double> attributeValues = instanceList.stream()
                 .map(x -> getAttributeValue(x, attribute))
                 .distinct()
                 .collect(Collectors.toList());
-        //Sort list so that averages can be calculated
-        Collections.sort(possibleThresholdValues);
+        //Sort list so that midpoints can be calculated
+        Collections.sort(attributeValues);
 
-        //Increasing size of possibleThreshold values by adding averages of pairs
-        int size = possibleThresholdValues.size() - 1;
+
+        //Calculating midpoints of attribute values to be used as threshold values
+        List<Double> midpointValues = new ArrayList<>();
+        int size = attributeValues.size() - 1;
         for(int i = 0; i < size; i++){
-            double mean = (possibleThresholdValues.get(i) + possibleThresholdValues.get(i + 1))/2;
-            possibleThresholdValues.add(mean);
+            double mean = (attributeValues.get(i) + attributeValues.get(i + 1))/2;
+            midpointValues.add(mean);
         }
 
-        return possibleThresholdValues;
+        return midpointValues;
     }
 
 
