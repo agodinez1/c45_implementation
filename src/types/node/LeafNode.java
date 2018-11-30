@@ -18,6 +18,6 @@ public class LeafNode extends Node {
 
     @Override
     public void print(String prefix) {
-        System.out.println(prefix  + "|-- " + targetValue);
+        System.out.println(prefix  + "|__ " + targetValue);
     };
 }
